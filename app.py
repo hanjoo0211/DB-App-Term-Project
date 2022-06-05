@@ -38,16 +38,25 @@ def register():
             if id == user[0]:
                 is_user = True
                 if password == user[1]:
-                    return "ID " + id + " has logged in"
+                    return render_template("login_success.html")
                 else:
-                    return "Incorrect Password"
+                    return render_template("login_fail.html")
         if is_user is False:
-            return "Incorrect ID"
+            return render_template("login_fail.html")
 
     elif send == 'sign up':
-        cur.execute("INSERT INTO users VALUES('{}', '{}');".format(id, password))
-        connect.commit()
-        return "ID " + id + " has signed up"
+        is_id_duplicate = False
+        cur.execute("SELECT id FROM users;")
+        user_data = cur.fetchall()
+        for user_id in user_data:
+            if id == user_id[0]:
+                is_id_duplicate = True
+                return render_template("ID_collision.html")
+        if not is_id_duplicate:
+            cur.execute("INSERT INTO users VALUES('{}', '{}');".format(id, password))
+            cur.execute("INSERT INTO account VALUES('{}', 10000, 'beginner');".format(id))
+            connect.commit()
+            return render_template("register_success.html")
 
     # return id + " " + password + " " + send
 
