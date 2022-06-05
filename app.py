@@ -38,7 +38,25 @@ def register():
             if id == user[0]:
                 is_user = True
                 if password == user[1]:
-                    return render_template("login_success.html")
+                    cur.execute("SELECT * FROM account WHERE ID = '{}';".format(id))
+                    account_info = cur.fetchall()
+                    cur.execute("select type, count(code) as traded from trade natural join category group by type order by traded desc")
+                    popular_category = cur.fetchall()[0][0]
+                    cur.execute("select buyer, sum(trade_price) as sum_buy from trade group by buyer order by sum_buy desc")
+                    most_buy_id = cur.fetchall()[0][0]
+                    cur.execute("select seller, sum(trade_price) as sum_sell from trade group by seller order by sum_sell desc")
+                    most_sell_id = cur.fetchall()[0][0]
+                    cur.execute("SELECT * FROM items;")
+                    items = cur.fetchall()
+                    return render_template(
+                        "login_success.html", 
+                        current_id = id, 
+                        account_info = account_info,
+                        popular_category = popular_category,
+                        most_buy_id = most_buy_id,
+                        most_sell_id = most_sell_id,
+                        items = items
+                        )
                 else:
                     return render_template("login_fail.html")
         if is_user is False:
