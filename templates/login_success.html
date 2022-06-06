@@ -35,7 +35,8 @@
     balance: {{ account_info[0][1]}}<br>
     rating: {{ account_info[0][2]}}
     <h1>ITEMS</h1>
-    <form action="/add_item" method="post">
+    <form action="/add_item_page" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
         <input type="submit" name="send" value="add">
     </form>
     <table border="1">
