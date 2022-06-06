@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trades Info</title>
+</head>
+<body>
+    <h2>Trades Info</h2>
+    <table border="1">
+        <thead>
+            <th>Buyer</th>
+            <th>Seller</th>
+            <th>Code</th>
+            <th>Trade Price</th>
+        </thead>
+        <tbody>
+            {% for info in trades_info %}
+            <tr>
+                <td>{{ info[0] }}</td>
+                <td>{{ info[1] }}</td>
+                <td>{{ info[2] }}</td>
+                <td>{{ info[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table><br>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="submit" name="send" value="return">
+    </form>
+</body>
+</html>

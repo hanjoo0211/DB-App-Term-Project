@@ -79,8 +79,20 @@ def register():
     # return id + " " + password + " " + send
 
 
-@app.route('/admin_function')
+@app.route('/admin_function', methods=['post'])
 def admin_function():
+    id = request.form["id"]
+    send = request.form["send"]
+
+    if send == 'users info':
+        cur.execute("SELECT * FROM users NATURAL JOIN account;")
+        users_info = cur.fetchall()
+        return render_template("users_info.html", current_id = id, users_info = users_info)
+    elif send == 'trades info':
+        cur.execute("SELECT * FROM trade;")
+        trades_info = cur.fetchall()
+        return render_template("trades_info.html", current_id = id, trades_info = trades_info)
+
     return render_template("main.html")
 
 
@@ -185,6 +197,7 @@ def buy_item():
         code = code,
         name = name,
         price = price,
+        stock = stock,
         seller = seller,
         account_info = account_info,
         how_many = how_many,
@@ -200,6 +213,7 @@ def confirm_trade():
     code = request.form["code"]
     name = request.form["name"]
     price = int(request.form["price"])
+    stock = int(request.form["stock"])
     seller = request.form["seller"] 
     how_many = int(request.form["how_many"])
     total_price = int(request.form["total_price"])
@@ -222,8 +236,10 @@ def confirm_trade():
     cur.execute("UPDATE account SET rating = '{}' where id = '{}';".format(seller_rating, seller))
 
     cur.execute("INSERT INTO trade VALUES('{}', '{}', '{}', '{}');".format(id, seller, code, total_price))
-    cur.execute("UPDATE items SET stock = stock - '{}' where code = '{}' and name = '{}' and price = '{}' and seller = '{}';".format(how_many, code, name, price, seller))
-    cur.execute("DELETE FROM items WHERE stock = 0;")
+    if how_many == stock:
+        cur.execute("DELETE FROM items WHERE code = '{}' and name = '{}' and price = '{}' and seller = '{}';".format(code, name, price, seller))
+    else:
+        cur.execute("UPDATE items SET stock = stock - '{}' where code = '{}' and name = '{}' and price = '{}' and seller = '{}';".format(how_many, code, name, price, seller))
 
     connect.commit()
 

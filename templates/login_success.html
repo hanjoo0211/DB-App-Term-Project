@@ -8,6 +8,7 @@
     {% if current_id == "admin" %}
         Admin function
         <form action="/admin_function" method="post">
+            <input type="hidden" name="id" value={{ current_id }}>
             <input type="submit" name="send" value="users info">
             <input type="submit" name="send" value="trades info">
         </form>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users Info</title>
+</head>
+<body>
+    <h2>Users Info</h2>
+    <table border="1">
+        <thead>
+            <th>ID</th>
+            <th>Password</th>
+            <th>Balance</th>
+            <th>Rating</th>
+        </thead>
+        <tbody>
+            {% for info in users_info %}
+            <tr>
+                <td>{{ info[0] }}</td>
+                <td>{{ info[1] }}</td>
+                <td>{{ info[2] }}</td>
+                <td>{{ info[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table><br>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="submit" name="send" value="return">
+    </form>
+</body>
+</html>
