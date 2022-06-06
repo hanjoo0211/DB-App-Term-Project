@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+</head>
+<body>
+    <h1>MESSAGE</h1>
+    <table border="1">
+        <thead>
+            <th>From</th>
+            <th>Message</th>
+            <th>Time</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for msg in messages %}
+            <tr>
+                <td>{{ msg[0] }}</td>
+                <td>{{ msg[2] }}</td>
+                <td>{{ msg[3] }}</td>
+                <td><form action="/delete_message" method="post">
+                    <input type="hidden" name="id" value="{{ current_id }}">
+                    <input type="hidden" name="sender" value="{{ msg[0] }}">
+                    <input type="hidden" name="msg" value="{{ msg[2] }}">
+                    <input type="hidden" name="time" value="{{ msg[3] }}">
+                    <input type="submit" name="send" value="delete">
+                </form></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table><br>
+    <h2>Send Message</h2>
+    <form action="/send_msg" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+
+        <label for="receiver">To:</label>
+        <select id="receiver" name="receiver">
+            {% for user in users %}
+            <option value={{ user[0] }}>{{ user[0] }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="msg">Message:</label>
+        <input id="msg" type="text" name="msg" value=""><br>
+    
+        <input type="submit" name="send" value="Send"><br>
+    </form>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="submit" name="send" value="return">
+    </form>
+</body>
+</html>

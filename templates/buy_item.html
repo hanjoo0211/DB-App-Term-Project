@@ -27,12 +27,12 @@
     Your balance: {{ account_info[0][1]}}<br>
     Your rating: {{ account_info[0][2]}}<br><br>
     <form action="/buy_item" method="post">
-        <input type="hidden" name="id" value={{ current_id }}>
-        <input type="hidden" name="code" value={{ code }}>
-        <input type="hidden" name="name" value={{ name }}>
+        <input type="hidden" name="id" value="{{ current_id }}">
+        <input type="hidden" name="code" value="{{ code }}">
+        <input type="hidden" name="name" value="{{ name }}">
         <input type="hidden" name="price" value={{ price }}>
         <input type="hidden" name="stock" value={{ stock }}>
-        <input type="hidden" name="seller" value={{ seller }}>
+        <input type="hidden" name="seller" value="{{ seller }}">
 
         <label for="how_many">How many?: </label>
         <input id="how_many" type="number" name="how_many" value="" required><br>
@@ -40,7 +40,7 @@
         <input type="submit" name="send" value="buy"><br>
     </form>
     <form action="/error_return" method="post">
-        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="hidden" name="id" value="{{ current_id }}">
         <input type="submit" name="send" value="cancel">
     </form>
 </body>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete account</title>
+</head>
+<body>
+    <h2>Delete account</h2>
+    <table border="1">
+        <thead>
+            <th>ID</th>
+            <th>Balance</th>
+            <th>Rating</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ user_info[0][0] }}</td>
+                <td>{{ user_info[0][2] }}</td>
+                <td>{{ user_info[0][3] }}</td>
+            </tr>
+        </tbody>
+    </table><br>
+    <form action="/delete_account" method="post">
+        <input type="hidden" name="id" value="{{ current_id }}">
+        
+        <label for="user_pwd">PASSWORD:</label><br>
+        <input id="user_pwd" type="password" name="password" value=""><br>
+    
+        <input type="submit" name="send" value="DELETE ACCOUNT">
+    </form>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value="{{ current_id }}">
+        <input type="submit" name="send" value="return">
+    </form>
+</body>
+</html>

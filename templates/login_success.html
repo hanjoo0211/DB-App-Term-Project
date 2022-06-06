@@ -8,12 +8,20 @@
     {% if current_id == "admin" %}
         Admin function
         <form action="/admin_function" method="post">
-            <input type="hidden" name="id" value={{ current_id }}>
+            <input type="hidden" name="id" value="{{ current_id }}">
             <input type="submit" name="send" value="users info">
             <input type="submit" name="send" value="trades info">
         </form>
-        =====================================
+    {% else %}
+        User function
+        <form action="/user_function" method="post">
+            <input type="hidden" name="id" value="{{ current_id }}">
+            <input type="submit" name="send" value="my trades info">
+            <input type="submit" name="send" value="edit password">
+            <input type="submit" name="send" value="delete account">
+        </form>
     {% endif %}
+    =====================================
     <table border="1">
         <thead>
             <th>Popular Category</th>
@@ -35,9 +43,13 @@
     </form>
     balance: {{ account_info[0][1]}}<br>
     rating: {{ account_info[0][2]}}
+    <form action="/message" method="post">
+        <input type="hidden" name="id" value="{{ current_id }}">
+        <input type="submit" name="send" value="Message">
+    </form>
     <h1>ITEMS</h1>
     <form action="/add_item_page" method="post">
-        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="hidden" name="id" value="{{ current_id }}">
         <input type="submit" name="send" value="add">
     </form>
     <table border="1">
@@ -49,7 +61,6 @@
             <th>Seller</th>
             <th></th>
         </thead>
-    
         <tbody>
             {% for item in items %}
             <tr>
@@ -59,12 +70,12 @@
                 <td>{{ item[3] }}</td>
                 <td>{{ item[4] }}</td>
                 <td><form action="/buy_item_page" method="post">
-                    <input type="hidden" name="id" value={{ current_id }}>
-                    <input type="hidden" name="code" value={{ item[0] }}>
-                    <input type="hidden" name="name" value={{ item[1] }}>
+                    <input type="hidden" name="id" value="{{ current_id }}">
+                    <input type="hidden" name="code" value="{{ item[0] }}">
+                    <input type="hidden" name="name" value="{{ item[1] }}">
                     <input type="hidden" name="price" value={{ item[2] }}>
                     <input type="hidden" name="stock" value={{ item[3] }}>
-                    <input type="hidden" name="seller" value={{ item[4] }}>
+                    <input type="hidden" name="seller" value="{{ item[4] }}">
                     {% if current_id == item[4] %}
                         <input type="submit" name="send" disabled value="buy">
                     {% else %}

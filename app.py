@@ -1,5 +1,6 @@
 import psycopg2
 from flask import Flask, render_template, request
+from datetime import datetime
 
 app = Flask(__name__)
 connect = psycopg2.connect("dbname=term user=postgres password=0000")
@@ -93,7 +94,96 @@ def admin_function():
         trades_info = cur.fetchall()
         return render_template("trades_info.html", current_id = id, trades_info = trades_info)
 
-    return render_template("main.html")
+
+@app.route('/user_function', methods=['post'])
+def user_function():
+    id = request.form["id"]
+    send = request.form["send"]
+
+    if send == 'my trades info':
+        cur.execute("SELECT * FROM trade WHERE buyer = '{}' or seller = '{}';".format(id, id))
+        trades_info = cur.fetchall()
+        return render_template("trades_info.html", current_id = id, trades_info = trades_info)
+    elif send == 'edit password':
+        cur.execute("SELECT * FROM users NATURAL JOIN account where id = '{}';".format(id))
+        user_info = cur.fetchall()
+        return render_template("edit_password.html", current_id = id, user_info = user_info)
+    elif send == 'delete account':
+        cur.execute("SELECT * FROM users NATURAL JOIN account where id = '{}';".format(id))
+        user_info = cur.fetchall()
+        return render_template("delete_account.html", current_id = id, user_info = user_info)
+
+
+@app.route('/edit_password', methods=['post'])
+def edit_password():
+    id = request.form["id"]
+    old_pwd = request.form["old_pwd"]
+    new_pwd = request.form["new_pwd"]
+
+    cur.execute("SELECT password FROM users where id = '{}';".format(id))
+    password = cur.fetchall()[0][0]
+    if old_pwd == password:
+        cur.execute("UPDATE users SET password = '{}' where id = '{}';".format(new_pwd, id))
+        connect.commit()
+        return render_template("error.html", current_id = id, error_messege = "Successfully changed!")
+    else:
+        return render_template("error.html", current_id = id, error_messege = "Wrong old password!")
+
+
+@app.route('/delete_account', methods=['post'])
+def delete_account():
+    id = request.form["id"]
+    old_pwd = request.form["password"]
+
+    cur.execute("SELECT password FROM users where id = '{}';".format(id))
+    password = cur.fetchall()[0][0]
+    if old_pwd == password:
+        cur.execute("DELETE FROM account where id = '{}';".format(id))
+        cur.execute("DELETE FROM users where id = '{}';".format(id))
+        connect.commit()
+        return render_template("main.html")
+    else:
+        return render_template("error.html", current_id = id, error_messege = "Wrong password!")
+
+
+@app.route('/message', methods=['post'])
+def message():
+    id = request.form["id"]
+    cur.execute("SELECT * FROM message WHERE receiver = '{}';".format(id))
+    messages = cur.fetchall()
+    cur.execute("SELECT id FROM users WHERE id != '{}';".format(id))
+    users = cur.fetchall()
+    return render_template("message.html", current_id = id, messages = messages, users = users)
+
+
+@app.route('/send_msg', methods=['post'])
+def send_msg():
+    id = request.form["id"]
+    receiver = request.form["receiver"]
+    msg = request.form["msg"]
+    time = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+
+    cur.execute("INSERT INTO message VALUES('{}', '{}', '{}', '{}');".format(id, receiver, msg, time))
+    connect.commit()
+
+    return render_template("error.html", current_id = id, error_messege = "Message Sent!")
+
+
+@app.route('/delete_message', methods=['post'])
+def delete_message():
+    id = request.form["id"]
+    sender = request.form["sender"]
+    msg = request.form["msg"]
+    time = request.form["time"]
+
+    cur.execute("DELETE FROM message where receiver = '{}' and sender = '{}' and msg = '{}' and time = '{}';".format(id, sender, msg, time))
+    connect.commit()
+
+    cur.execute("SELECT * FROM message WHERE receiver = '{}';".format(id))
+    messages = cur.fetchall()
+    cur.execute("SELECT id FROM users WHERE id != '{}';".format(id))
+    users = cur.fetchall()
+    return render_template("message.html", current_id = id, messages = messages, users = users)
 
 
 @app.route('/add_item_page', methods=['post'])

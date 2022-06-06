@@ -17,12 +17,12 @@
         </tbody>
     </table><br>
     <form action="/add_item" method="post">
-        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="hidden" name="id" value="{{ current_id }}">
 
         <label for="item_code">Code:</label>
         <select id="item_code" name="code">
             {% for category in categories %}
-            <option value={{ category[0] }}>{{ category[0] }} {{ category[1] }}</option>
+            <option value="{{ category[0] }}">{{ category[0] }} {{ category[1] }}</option>
             {% endfor %}
         </select><br>
 
@@ -38,7 +38,7 @@
         <input type="submit" name="send" value="add"><br>
     </form>
     <form action="/error_return" method="post">
-        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="hidden" name="id" value="{{ current_id }}">
         <input type="submit" name="send" value="cancel">
     </form>
 </body>

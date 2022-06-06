@@ -7,7 +7,7 @@
 <body>
 {{ error_messege }}<br>
 <form action="/error_return" method="post">
-    <input type="hidden" name="id" value={{ current_id }}>
+    <input type="hidden" name="id" value="{{ current_id }}">
     <input type="submit" name="send" value="return">
 </form>
 </form>
