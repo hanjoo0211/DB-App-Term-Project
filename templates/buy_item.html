@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Buy Item</title>
+</head>
+<body>
+    <h2>ITEM INFO</h2>
+    <table border="1">
+        <thead>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Seller</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ code }}</td>
+                <td>{{ name }}</td>
+                <td>{{ price }}</td>
+                <td>{{ stock }}</td>
+                <td>{{ seller }}</td>
+            </tr>
+        </tbody>
+    </table><br>
+    Your balance: {{ account_info[0][1]}}<br>
+    Your rating: {{ account_info[0][2]}}<br><br>
+    <form action="/buy_item" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="hidden" name="code" value={{ code }}>
+        <input type="hidden" name="name" value={{ name }}>
+        <input type="hidden" name="price" value={{ price }}>
+        <input type="hidden" name="stock" value={{ stock }}>
+        <input type="hidden" name="seller" value={{ seller }}>
+
+        <label for="how_many">How many?: </label>
+        <input id="how_many" type="number" name="how_many" value="" required><br>
+    
+        <input type="submit" name="send" value="buy"><br>
+    </form>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="submit" name="send" value="cancel">
+    </form>
+</body>
+</html>

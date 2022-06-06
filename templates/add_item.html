@@ -20,8 +20,6 @@
         <input type="hidden" name="id" value={{ current_id }}>
 
         <label for="item_code">Code:</label>
-        <!-- <input id="item_code" type="text" name="code" value=""><br> -->
-
         <select id="item_code" name="code">
             {% for category in categories %}
             <option value={{ category[0] }}>{{ category[0] }} {{ category[1] }}</option>
@@ -32,12 +30,15 @@
         <input id="item_name" type="text" name="name" value="" required><br>
 
         <label for="item_price">Price:</label>
-        <input id="item_price" type="number" name="price" value=""><br>
+        <input id="item_price" type="number" name="price" value="" required><br>
 
         <label for="item_stock">Stock:</label>
-        <input id="item_stock" type="number" name="stock" value=""><br>
+        <input id="item_stock" type="number" name="stock" value="" required><br>
     
         <input type="submit" name="send" value="add"><br>
+    </form>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
         <input type="submit" name="send" value="cancel">
     </form>
 </body>

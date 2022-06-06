@@ -107,7 +107,7 @@ def add_item():
         items = cur.fetchall()
         for item in items:
             if (code, name, price, id) == item[0:4]:
-                cur.execute("UPDATE items SET stock = '{}' where code = '{}' and name = '{}' and price = '{}' and seller = '{}';".format(item[4] + stock, code, name, price, id))
+                cur.execute("UPDATE items SET stock = stock + '{}' where code = '{}' and name = '{}' and price = '{}' and seller = '{}';".format(stock, code, name, price, id))
                 is_duplicate = True
         if not is_duplicate:
             cur.execute("INSERT INTO items VALUES('{}', '{}', '{}', '{}', '{}');".format(code, name, price, stock, id))
@@ -134,9 +134,141 @@ def add_item():
         )
 
 
-@app.route('/buy_item')
+@app.route('/buy_item_page', methods=['post'])
+def buy_item_page():
+    id = request.form["id"]
+    code = request.form["code"]
+    name = request.form["name"]
+    price = request.form["price"]
+    stock = request.form["stock"]
+    seller = request.form["seller"]  
+    cur.execute("SELECT * FROM account WHERE ID = '{}';".format(id))
+    account_info = cur.fetchall()
+    return render_template(
+        "buy_item.html",
+        current_id = id,
+        code = code,
+        name = name,
+        price = price,
+        stock = stock,
+        seller = seller,
+        account_info = account_info
+        )
+
+
+@app.route('/buy_item', methods=['post'])
 def buy_item():
-    return render_template("main.html")
+    id = request.form["id"]
+    code = request.form["code"]
+    name = request.form["name"]
+    price = int(request.form["price"])
+    stock = int(request.form["stock"])
+    seller = request.form["seller"] 
+    how_many = int(request.form["how_many"])
+
+    cur.execute("SELECT * FROM account WHERE ID = '{}';".format(id))
+    account_info = cur.fetchall()
+    total_price = price * how_many
+    cur.execute("select discount from account natural join rating_info where id = '{}'".format(id))
+    discount_rate = cur.fetchall()[0][0]
+    discount_price = total_price * discount_rate // 100
+    final_price = total_price - discount_price
+    
+    if how_many > stock:
+        return render_template("error.html", current_id = id, error_messege = "You picked more than stock!")
+    elif final_price > int(account_info[0][1]):
+        return render_template("error.html", current_id = id, error_messege = "Your balance is less than final price!")
+    else:
+        return render_template(
+        "trade_item.html",
+        current_id = id,
+        code = code,
+        name = name,
+        price = price,
+        seller = seller,
+        account_info = account_info,
+        how_many = how_many,
+        total_price = total_price,
+        discount_price = discount_price,
+        final_price = final_price
+        )
+
+
+@app.route('/confirm_trade', methods=['post'])
+def confirm_trade():
+    id = request.form["id"]
+    code = request.form["code"]
+    name = request.form["name"]
+    price = int(request.form["price"])
+    seller = request.form["seller"] 
+    how_many = int(request.form["how_many"])
+    total_price = int(request.form["total_price"])
+    final_price = int(request.form["final_price"])
+
+    cur.execute("UPDATE account SET balance = balance - '{}' where id = '{}';".format(final_price, id))
+    cur.execute("UPDATE account SET balance = balance + '{}' where id = '{}';".format(total_price, seller))
+
+    cur.execute("SELECT balance FROM account WHERE ID = '{}';".format(id))
+    buyer_balance = cur.fetchall()[0][0]
+    cur.execute("SELECT balance FROM account WHERE ID = '{}';".format(seller))
+    seller_balance = cur.fetchall()[0][0]
+
+    cur.execute("SELECT rating, condition FROM rating_info WHERE condition < '{}' order by condition desc;".format(buyer_balance))
+    buyer_rating = cur.fetchall()[0][0]
+    cur.execute("SELECT rating, condition FROM rating_info WHERE condition < '{}' order by condition desc;".format(seller_balance))
+    seller_rating = cur.fetchall()[0][0]
+
+    cur.execute("UPDATE account SET rating = '{}' where id = '{}';".format(buyer_rating, id))
+    cur.execute("UPDATE account SET rating = '{}' where id = '{}';".format(seller_rating, seller))
+
+    cur.execute("INSERT INTO trade VALUES('{}', '{}', '{}', '{}');".format(id, seller, code, total_price))
+    cur.execute("UPDATE items SET stock = stock - '{}' where code = '{}' and name = '{}' and price = '{}' and seller = '{}';".format(how_many, code, name, price, seller))
+    cur.execute("DELETE FROM items WHERE stock = 0;")
+
+    connect.commit()
+
+    cur.execute("SELECT * FROM account WHERE ID = '{}';".format(id))
+    account_info = cur.fetchall()
+    cur.execute("select type, count(code) as traded from trade natural join category group by type order by traded desc")
+    popular_category = cur.fetchall()[0][0]
+    cur.execute("select buyer, sum(trade_price) as sum_buy from trade group by buyer order by sum_buy desc")
+    most_buy_id = cur.fetchall()[0][0]
+    cur.execute("select seller, sum(trade_price) as sum_sell from trade group by seller order by sum_sell desc")
+    most_sell_id = cur.fetchall()[0][0]
+    cur.execute("SELECT * FROM items ORDER BY code, name, price, seller;")
+    items = cur.fetchall()
+    return render_template(
+        "login_success.html", 
+        current_id = id, 
+        account_info = account_info,
+        popular_category = popular_category,
+        most_buy_id = most_buy_id,
+        most_sell_id = most_sell_id,
+        items = items
+        )
+
+@app.route('/error_return', methods=['post'])
+def error_return():
+    id = request.form["id"]
+    cur.execute("SELECT * FROM account WHERE ID = '{}';".format(id))
+    account_info = cur.fetchall()
+    cur.execute("select type, count(code) as traded from trade natural join category group by type order by traded desc")
+    popular_category = cur.fetchall()[0][0]
+    cur.execute("select buyer, sum(trade_price) as sum_buy from trade group by buyer order by sum_buy desc")
+    most_buy_id = cur.fetchall()[0][0]
+    cur.execute("select seller, sum(trade_price) as sum_sell from trade group by seller order by sum_sell desc")
+    most_sell_id = cur.fetchall()[0][0]
+    cur.execute("SELECT * FROM items ORDER BY code, name, price, seller;")
+    items = cur.fetchall()
+    return render_template(
+        "login_success.html", 
+        current_id = id, 
+        account_info = account_info,
+        popular_category = popular_category,
+        most_buy_id = most_buy_id,
+        most_sell_id = most_sell_id,
+        items = items
+        )
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Buy Confirm</title>
+</head>
+<body>
+    Your balance: {{ account_info[0][1]}}<br>
+    Your rating: {{ account_info[0][2]}}<br><br>
+    Total price: {{ total_price }}<br>
+    Discount price: {{ discount_price }}<br>
+    =====================================<br>
+    Final price: {{ final_price }}
+    <form action="/confirm_trade" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="hidden" name="code" value={{ code }}>
+        <input type="hidden" name="name" value={{ name }}>
+        <input type="hidden" name="price" value={{ price }}>
+        <input type="hidden" name="seller" value={{ seller }}>
+        <input type="hidden" name="how_many" value={{ how_many }}>
+        <input type="hidden" name="total_price" value={{ total_price }}>
+        <input type="hidden" name="final_price" value={{ final_price }}>
+    
+        <input type="submit" name="send" value="confirm"><br>
+    </form>
+    <form action="/error_return" method="post">
+        <input type="hidden" name="id" value={{ current_id }}>
+        <input type="submit" name="send" value="cancel">
+    </form>
+</body>
+</html>
