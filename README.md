@@ -1,10 +1,10 @@
 # DB App Term Project Report
 
-# Schema Diagram
+## Schema Diagram
 
 ![schema_diagram.png](DB%20App%20Term%20Project%20Report%203c3ece1c8e014660a2d70eed6742d77a/schema_diagram.png)
 
-# HTML / Functions
+## HTML / Functions
 
 > `main.html`
 > 
