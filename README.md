@@ -1,10 +1,16 @@
 # DB App Term Project Report
 
-## Schema Diagram
+Korea Univ. COSE371(01) Term Project
+
+DB WEB Application with `Flask`, `PostgreSQL`
+
+<img alt="Flask" src ="https://img.shields.io/badge/Flask-000000.svg?&style=for-the-badge&logo=Flask&logoColor=white"/><img alt="PostgreSQL" src ="https://img.shields.io/badge/PostgreSQL-4169E1.svg?&style=for-the-badge&logo=PostgreSQL&logoColor=white"/>
+
+# Schema Diagram
 
 ![schema_diagram.png](DB%20App%20Term%20Project%20Report%203c3ece1c8e014660a2d70eed6742d77a/schema_diagram.png)
 
-## HTML / Functions
+# HTML / Functions
 
 > `main.html`
 > 
