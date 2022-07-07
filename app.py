@@ -1,9 +1,10 @@
 import psycopg2
 from flask import Flask, render_template, request
 from datetime import datetime
+from postgresKeys import key
 
 app = Flask(__name__)
-connect = psycopg2.connect("dbname=term user=postgres password=0000")
+connect = psycopg2.connect(key)
 cur = connect.cursor()  # create cursor
 
 
